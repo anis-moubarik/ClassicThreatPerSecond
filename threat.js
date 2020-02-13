@@ -104,9 +104,11 @@ class Encounter {
         this.threat = 0.0;
         this.breakdown = {};
         this.cast_count = {};
-		this.crit_count = {};
-		this.hit_count = {}
-        for (let event of this.events) {				
+        for (let event of this.events) {
+            //Check for death
+            if(event.targetID == this.playerID && event.type == "death") {
+              this.last_action_timestamp = event.timestamp;
+            }
             if (event.sourceID != this.playerID)
                 continue;
 
