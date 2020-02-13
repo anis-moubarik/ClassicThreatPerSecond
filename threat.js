@@ -111,7 +111,7 @@ class Encounter {
             let t = 0;
             let event_name = "";
             switch (event.type) {
-                case 'combatantinfo': //TODO: Retrieve gear
+                case 'combatantinfo'://TODO: Retrieve gear
                 case 'extraattacks':
                     break;
                 case 'heal':
@@ -134,8 +134,10 @@ class Encounter {
                             console.log(`Unhandled resource gain [${event.resourceChangeType}] ${event.ability.name} (${event.ability.guid})`)
                             continue;
                     }
+					break;
 				case 'death':
 					this.last_action_timestamp = event.timestamp;
+					break;
                 case 'damage':
                     // Ignore self damage (e.g. sappers)
                     if (event.targetID == this.playerID)
@@ -158,7 +160,7 @@ class Encounter {
                 this.breakdown[event_name] = (this.breakdown[event_name]||0)+t;
             }
 
-            // console.log(this.threat, t, event);
+            console.log(this.threat, t, event);
             this.threat += t;
         }
     }
