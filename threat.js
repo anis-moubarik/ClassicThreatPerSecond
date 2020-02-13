@@ -106,7 +106,7 @@ class Encounter {
         this.cast_count = {};
 		this.crit_count = {};
 		this.hit_count = {}
-        for (let event of this.events) {
+        for (let event of this.events) {				
             if (event.sourceID != this.playerID)
                 continue;
 
@@ -136,9 +136,6 @@ class Encounter {
                             console.log(`Unhandled resource gain [${event.resourceChangeType}] ${event.ability.name} (${event.ability.guid})`)
                             continue;
                     }
-					break;
-				case 'death':
-					this.last_action_timestamp = event.timestamp;
 					break;
                 case 'damage':
                     // Ignore self damage (e.g. sappers)
