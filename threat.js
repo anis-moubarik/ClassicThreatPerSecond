@@ -267,7 +267,7 @@ $(document).ready(function() {
             results.append($('<div>', {text: `TPS: ${(e.threat / e.time).toFixed(2)}`}));
 			//Add 5s threshold for the "active" TPS
 			if(e.last_action_timestamp > 0 && ((e.stop - e.last_action_timestamp) / 1000) > 5.0){
-				results.append($('<div>', {text: `TPS (Till Death): ${(e.threat / ((e.stop - e.last_action_timestamp)/1000)).toFixed(2)}`}));
+				results.append($('<div>', {text: `TPS (Till Death): ${(e.threat / (e.time - (e.stop - e.last_action_timestamp)/1000)).toFixed(2)}`}));
 			}
 
             let entries = Object.entries(e.breakdown);
