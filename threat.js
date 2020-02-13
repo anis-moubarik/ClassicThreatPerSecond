@@ -188,7 +188,7 @@ class Encounter {
                 this.breakdown[event_name] = (this.breakdown[event_name]||0)+t;
             }
 
-            console.log(this.threat, t, event);
+            //console.log(this.threat, t, event);
             this.threat += t;
         }		
     }
