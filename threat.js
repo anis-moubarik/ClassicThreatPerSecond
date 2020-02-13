@@ -106,10 +106,10 @@ class Encounter {
         this.cast_count = {};
         for (let event of this.events) {
 			
-			//Check for death
-			if(event.targetID == this.playerID && event.type == "death") {
-				this.last_action_timestamp = event.timestamp;
-			}
+		    //Check for death
+		    if(event.targetID == this.playerID && event.type == "death") {
+			    this.last_action_timestamp = event.timestamp;
+		    }
             if (event.sourceID != this.playerID)
                 continue;
 
@@ -162,7 +162,7 @@ class Encounter {
                 this.breakdown[event_name] = (this.breakdown[event_name]||0)+t;
             }
 
-            console.log(this.threat, t, event);
+            //console.log(this.threat, t, event);
             this.threat += t;
         }
     }
