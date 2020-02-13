@@ -165,6 +165,7 @@ class Encounter {
 							this.crit_count[event_name] = (this.crit_count[event_name]||0)+1;
 						}
 					}
+					break;
                 case 'cast':
                 default:
                     let f = this.player.spell(event.ability.guid);
