@@ -20,7 +20,7 @@ class Parse {
         this.enemies = report['enemies'];
 
         this.encounters = report['fights'].filter((fight) => {
-            return (fight['boss']);
+            return (fight['boss'] && fight['kill']);
         }).map((fight) => {
             return new Encounter(this.reportCode, fight);
         });
@@ -50,7 +50,7 @@ class Encounter {
         this.encounterID = fight['boss'];
         this.start = fight['start_time'];
         this.stop = fight['end_time'];
-        this.name = (fight['kill'] ? fight['name']+' [kill]' : fight['name']);
+        this.name = fight['name'];
         this.time = (this.stop - this.start) / 1000;
 		this.last_action_timestamp = 0;
 
@@ -105,10 +105,11 @@ class Encounter {
         this.breakdown = {};
         this.cast_count = {};
         for (let event of this.events) {
-            //Check for death
-            if(event.targetID == this.playerID && event.type == "death") {
-              this.last_action_timestamp = event.timestamp;
-            }
+			
+			//Check for death
+			if(event.targetID == this.playerID && event.type == "death") {
+				this.last_action_timestamp = event.timestamp;
+			}
             if (event.sourceID != this.playerID)
                 continue;
 
@@ -143,32 +144,6 @@ class Encounter {
                     // Ignore self damage (e.g. sappers)
                     if (event.targetID == this.playerID)
                         continue;
-					
-					let fun = this.player.spell(event.ability.guid)
-					if (fun === undefined) {
-						console.log(`Unhandled ability ${event.ability.name} (${event.ability.guid})`);
-						continue;
-					}
-					[t, event_name] = fun(this.player, event);
-					t *= this.player.threatModifier;
-					//With Melee add up crits, normal hits and glancings
-					if(event_name === "Melee"){
-						if (event.hitType === 2){
-							this.crit_count[event_name] = (this.crit_count[event_name]||0)+1;
-							this.hit_count[event_name] = (this.hit_count[event_name]||0)+1;
-						} else if(event.hitType === 1 || event.hitType == 6) {
-							this.hit_count[event_name] = (this.hit_count[event_name]||0)+1;
-						}
-					} else {
-						//With yellow hits add up normal hits and normal blocks
-						if(event.hitType === 1 || event.hitType === 4) {
-							this.hit_count[event_name] = (this.hit_count[event_name]||0)+1;
-						} else if (event.hitType === 2){
-							this.hit_count[event_name] = (this.hit_count[event_name]||0)+1;
-							this.crit_count[event_name] = (this.crit_count[event_name]||0)+1;
-						}
-					}
-					break;
                 case 'cast':
                 default:
                     let f = this.player.spell(event.ability.guid);
@@ -187,9 +162,9 @@ class Encounter {
                 this.breakdown[event_name] = (this.breakdown[event_name]||0)+t;
             }
 
-            //console.log(this.threat, t, event);
+            console.log(this.threat, t, event);
             this.threat += t;
-        }		
+        }
     }
 }
 
@@ -311,14 +286,12 @@ $(document).ready(function() {
                 dataTable.addColumn('number', "Threat");
                 dataTable.addColumn('number', "TPS");
                 dataTable.addColumn('number', "Percent");
-				dataTable.addColumn('number', "Crit %");
                 dataTable.addRows(entries.map((value, index, array) => {
                     let abilityThreat = value[1];
                     let percentage = 100 * abilityThreat / e.threat;
                     let tps = abilityThreat / e.time;
                     let name = value[0];
                     let casts = e.cast_count[name];
-					let crit = (e.crit_count[name] / e.hit_count[name]) * 100;
                     let cpm = 60 * casts / e.time;
                     if (isNaN(cpm)) {
                         cpm = "--";
@@ -331,13 +304,7 @@ $(document).ready(function() {
                     } else {
                         casts = casts.toString()
                     }
-					
-					if(isNaN(crit)) {
-						crit = 0;
-					} else {
-						crit = Number(crit.toFixed(2));
-					}
-                    return [ name, casts, cpm, abilityThreat, tps, percentage, crit ];
+                    return [ name, casts, cpm, abilityThreat, tps, percentage ];
                 }));
                 let table = new google.visualization.Table(document.getElementById("table"));
                 numberFormat.format(dataTable, 4);
