@@ -20,7 +20,7 @@ class Parse {
         this.enemies = report['enemies'];
 
         this.encounters = report['fights'].filter((fight) => {
-            return (fight['boss'] && fight['kill']);
+            return (fight['boss']);
         }).map((fight) => {
             return new Encounter(this.reportCode, fight);
         });
@@ -50,7 +50,7 @@ class Encounter {
         this.encounterID = fight['boss'];
         this.start = fight['start_time'];
         this.stop = fight['end_time'];
-        this.name = fight['name'];
+        this.name = (fight['kill'] ? fight['name']+' [kill]' : fight['name']);
         this.time = (this.stop - this.start) / 1000;
 
         this.events = [];
