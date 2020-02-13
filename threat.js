@@ -136,7 +136,6 @@ class Encounter {
                             console.log(`Unhandled resource gain [${event.resourceChangeType}] ${event.ability.name} (${event.ability.guid})`)
                             continue;
                     }
-                    break;
 				case 'death':
 					this.last_action_timestamp = event.timestamp;
                 case 'damage':
