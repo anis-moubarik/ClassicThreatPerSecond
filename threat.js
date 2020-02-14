@@ -52,7 +52,7 @@ class Encounter {
         this.stop = fight['end_time'];
         this.name = fight['name'];
         this.time = (this.stop - this.start) / 1000;
-		this.last_action_timestamp = 0;
+        this.last_action_timestamp = 0;
 
         this.events = [];
         this.playerIDs = [];
@@ -105,11 +105,11 @@ class Encounter {
         this.breakdown = {};
         this.cast_count = {};
         for (let event of this.events) {
-			
-		    //Check for death
-		    if(event.targetID == this.playerID && event.type == "death") {
-			    this.last_action_timestamp = event.timestamp;
-		    }
+            
+            //Check for death
+            if(event.targetID == this.playerID && event.type == "death") {
+                this.last_action_timestamp = event.timestamp;
+            }
             if (event.sourceID != this.playerID)
                 continue;
 
@@ -139,7 +139,7 @@ class Encounter {
                             console.log(`Unhandled resource gain [${event.resourceChangeType}] ${event.ability.name} (${event.ability.guid})`)
                             continue;
                     }
-					break;
+                    break;
                 case 'damage':
                     // Ignore self damage (e.g. sappers)
                     if (event.targetID == this.playerID)
@@ -265,10 +265,10 @@ $(document).ready(function() {
             results.append($('<h1>', {text: `${playerName} - ${e.name} (${e.time.toFixed(2)})`}));
             results.append($('<div>', {text: `Total threat: ${e.threat.toFixed(0)}`}));
             results.append($('<div>', {text: `TPS: ${(e.threat / e.time).toFixed(2)}`}));
-			//Add 5s threshold for the "active" TPS
-			if(e.last_action_timestamp > 0 && ((e.stop - e.last_action_timestamp) / 1000) > 5.0){
-				results.append($('<div>', {text: `TPS (Till Death): ${(e.threat / (e.time - (e.stop - e.last_action_timestamp)/1000)).toFixed(2)}`}));
-			}
+            //Add 5s threshold for the "active" TPS
+            if(e.last_action_timestamp > 0 && ((e.stop - e.last_action_timestamp) / 1000) > 5.0){
+                results.append($('<div>', {text: `TPS (Till Death): ${(e.threat / (e.time - (e.stop - e.last_action_timestamp)/1000)).toFixed(2)}`}));
+            }
 
             let entries = Object.entries(e.breakdown);
             entries.sort(function (a, b) {
