@@ -1,4 +1,5 @@
-var gAPIKey, gParse;
+//@discord [ResultsMayVary#8821]
+var gAPIKey="6238f70a542f7f13950a61b6a4d93fcb", gParse;
 
 
 function newParse(reportCode, callback) {
@@ -112,7 +113,7 @@ class Encounter {
             if(event.targetID == this.playerID && event.type == "death") {
               this.last_action_timestamp = event.timestamp;
             }
-            if (event.sourceID != this.playerID)
+            if (event.sourceID != this.playerID && event.targetID != this.playerID)
                 continue;
 
             let t = 0;
@@ -122,11 +123,15 @@ class Encounter {
                 case 'extraattacks':
                     break;
                 case 'heal':
+                    if (event.sourceID != this.playerID || !this.playerIDs.includes(event.targetID))
+                        continue;
                     // Amount healed always in event.amount, overhealing in event.overheal
                     t = (event.amount / 2.0) * this.player.threatModifier;
                     event_name = "Heal";
                     break;
                 case 'energize':
+                    if (event.targetID != this.playerID)
+                        continue
                     // resourceChange is always the full amount, have to subtract event.waste
                     switch (event.resourceChangeType) {
                         case 0:
@@ -174,6 +179,9 @@ class Encounter {
 					break;
                 case 'cast':
                 default:
+                    if (event.sourceID != this.playerID)
+                        continue;
+
                     let f = this.player.spell(event.ability.guid);
                     if (f == undefined) {
                         console.log(`Unhandled ability ${event.ability.name} (${event.ability.guid})`)
@@ -214,12 +222,10 @@ class Enemy {
 
 $(document).ready(function() {
     $("#reportForm").submit((event) => {
-        gAPIKey = $("#api").val();
         let reportURL = $("#report").val();
-        console.log(gAPIKey, reportURL);
 
-        if (!gAPIKey || !reportURL) {
-            alert("Fill in the damn form");
+        if (!reportURL) {
+            alert("Enter your report URL");
         } else {
             let reportID = reportURL;
             try {
