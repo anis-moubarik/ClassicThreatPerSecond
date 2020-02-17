@@ -1,5 +1,5 @@
 //@discord [ResultsMayVary#8821]
-var gAPIKey="6238f70a542f7f13950a61b6a4d93fcb", gParse;
+var gAPIKey="1b0565cb67bb457c53f2767be257e92c", gParse;
 
 
 function newParse(reportCode, callback) {
